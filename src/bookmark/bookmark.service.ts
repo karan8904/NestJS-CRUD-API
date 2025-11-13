@@ -10,13 +10,12 @@ import { BookmarkDto } from './dto/bookmarks.dto';
 export class BookmarkService {
   constructor(private prismaService: PrismaService) {}
 
-  async createBookmark(dto: BookmarkDto) {
-    const id = dto.userId;
-    if (isNaN(id)) {
-      throw new BadRequestException('UserId must be numeric.');
-    }
+  async createBookmark(dto: BookmarkDto, userId: number) {
     const bookmark = await this.prismaService.bookmark.create({
-      data: dto,
+      data: {
+        ...dto,
+        userId,
+      },
     });
     return {
       message: 'Bookmark created successfully',
@@ -24,32 +23,35 @@ export class BookmarkService {
     };
   }
 
-  async deleteBookmark(id: string) {
+  async deleteBookmark(id: string, userId: number) {
     const bookmarkId = Number(id);
     const bookmark = await this.prismaService.bookmark.findUnique({
       where: {
         id: bookmarkId,
+        userId,
       },
     });
     if (!bookmark) {
       throw new NotFoundException('Bookmark with given id does not exist.');
     }
-    await this.prismaService.bookmark.delete({ where: { id: bookmarkId } });
+    await this.prismaService.bookmark.delete({
+      where: { id: bookmarkId, userId },
+    });
     return {
       message: 'Bookmark deleted successfully.',
     };
   }
 
-  async updateBookmark(dto: BookmarkDto) {
-    const { title, description, link, userId, id } = dto;
+  async updateBookmark(dto: BookmarkDto, userId: number) {
+    const { title, description, link, id } = dto;
     const bookmark = await this.prismaService.bookmark.findUnique({
-      where: { id: id },
+      where: { id, userId },
     });
     if (!bookmark) {
       throw new NotFoundException('Bookmark with given id does not exist.');
     }
     const newBookmark = await this.prismaService.bookmark.update({
-      where: { id: id },
+      where: { id, userId },
       data: {
         title: title,
         link: link,

@@ -9,10 +9,10 @@ import {
 export class BookmarkDto {
   @IsNotEmpty()
   title: string;
+
   @IsUrl()
   link: string;
-  @IsNotEmpty()
-  userId: number;
+
   @IsString()
   description: string;
 
