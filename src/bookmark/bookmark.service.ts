@@ -56,6 +56,7 @@ export class BookmarkService {
         title: title,
         link: link,
         description: description,
+        updatedAt: new Date(),
       },
     });
 

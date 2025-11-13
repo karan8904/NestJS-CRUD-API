@@ -60,7 +60,7 @@ export class AuthService {
         email: email,
       },
       {
-        expiresIn: '20m',
+        expiresIn: '7d',
         secret: process.env.JWT_SECRET,
       },
     );
